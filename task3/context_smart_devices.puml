@@ -1,0 +1,28 @@
+@startuml
+title Контекстная диаграмма: Умный дом (интеграция с партнёром)
+
+actor "Собственник" as Owner
+rectangle "PropDevelopment" {
+    rectangle "Мобильное приложение" as MobileApp
+    rectangle "tenant-core-app" as TenantCore
+}
+rectangle "Платформа Умный дом (партнёр)" as SmartPlatform {
+    rectangle "Управляющий хаб" as Hub
+    rectangle "AI-сервис распознавания" as AI
+}
+rectangle "Домофоны (устройства)" as Intercoms
+rectangle "Шлагбаумы (устройства)" as Barriers
+
+' Связи
+Owner --> MobileApp : "Использует"
+MobileApp --> SmartPlatform : "REST/WebSocket (открыть дверь/шлагбаум, видеозвонок)"
+SmartPlatform --> TenantCore : "REST (проверка прав доступа)"
+TenantCore --> SmartPlatform : "REST (уведомления о событиях)"
+
+' Внутренняя экосистема партнёра
+SmartPlatform --> Hub : "HTTP (управление устройствами)"
+Hub --> Intercoms : "HTTP"
+Hub --> Barriers : "HTTP"
+SmartPlatform --> AI : "gRPC/REST (распознавание)"
+
+@enduml
