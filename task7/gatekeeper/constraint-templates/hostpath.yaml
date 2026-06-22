@@ -1,0 +1,18 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: hostpath
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sHostPath
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package admission
+        violation[{"msg": msg}] {
+          v := input.review.object.spec.volumes[_]
+          v.hostPath
+          msg := sprintf("Pod %v uses hostPath volume", [input.review.object.metadata.name])
+        }
